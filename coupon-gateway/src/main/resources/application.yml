@@ -1,0 +1,38 @@
+server:
+  port: 9005
+
+spring:
+  application:
+    name: coupon-gateway
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8000/eureka/
+
+zuul:
+  # 网关前缀-非必须
+  prefix: /sorcery
+  routes:
+    # 优惠券模板微服务路由配置定义
+    template:
+      path: /coupon-template/**
+      serviceId: eureka-client-coupon-template
+      # 是否需要跳过前缀，默认值是true，修改为false不跳过前缀
+      strip-prefix: false
+    # 优惠券分发服务路由配置
+    distribution:
+      path: /coupon-distribution/**
+      serviceId: eureka-client-coupon-distribution
+      strip-prefix: false
+    # 结算服务路由配置
+    settlement:
+      path: /coupon-settlement/**
+      serviceId: eureka-client-coupon-settlement
+      strip-prefix: false
+  host:
+    connect-timeout-millis: 15000
+    socket-timeout-millis: 60000
+ribbon:
+  ConnectTimeout: 15000
+  ReadTimeout: 15000
